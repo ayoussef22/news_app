@@ -1,22 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:news_app/CategoryDetails.dart';
-import 'package:news_app/HomeScreen.dart';
+import 'package:news_app/Category/CategoryDetails.dart';
+import 'package:news_app/Home/HomeScreen.dart';
 import 'package:news_app/MyTheme.dart';
 
-void main(){
+void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget{
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-
     return MaterialApp(
       routes: {
-        HomeScreen.routeName:(context)=>HomeScreen(),
-        CategoryDetails.routeName:(context)=>CategoryDetails(),
+        HomeScreen.routeName: (context) => HomeScreen(),
       },
-      initialRoute: CategoryDetails.routeName,
+      initialRoute: HomeScreen.routeName,
       theme: MyTheme.lightTheme,
     );
   }
