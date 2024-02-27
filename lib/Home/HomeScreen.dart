@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:news_app/Category/CategoryDetails.dart';
 import 'package:news_app/Category/CategoryFragment.dart';
 import 'package:news_app/Home/HomeDrawer.dart';
+import 'package:news_app/Home/NewsSearchDelegate.dart';
 import 'package:news_app/Model/MyCategory.dart';
 import 'package:news_app/Settings.dart';
 
@@ -39,6 +40,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     .titleLarge
                     ?.copyWith(color: Colors.white),
               ),
+              actions: [
+                IconButton(onPressed: (){
+                  showSearch(context: context, delegate: NewsSearchDelegate());
+                }, icon: Icon(Icons.search_outlined,size: 30,))
+              ],
             ),
             drawer: Drawer(
               child: HomeDrawer(
