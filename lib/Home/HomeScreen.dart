@@ -41,9 +41,15 @@ class _HomeScreenState extends State<HomeScreen> {
                     ?.copyWith(color: Colors.white),
               ),
               actions: [
-                IconButton(onPressed: (){
-                  showSearch(context: context, delegate: NewsSearchDelegate());
-                }, icon: Icon(Icons.search_outlined,size: 30,))
+                IconButton(
+                    onPressed: () {
+                      showSearch(
+                          context: context, delegate: NewsSearchDelegate());
+                    },
+                    icon: const Icon(
+                      Icons.search_outlined,
+                      size: 30,
+                    ))
               ],
             ),
             drawer: Drawer(

@@ -43,7 +43,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
               );
             }
             // server has response
-            else if (snapshot.data?.status != 'ok') {
+             if (snapshot.data?.status != 'ok') {
               return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,

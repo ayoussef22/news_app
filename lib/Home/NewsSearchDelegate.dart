@@ -13,7 +13,7 @@ class NewsSearchDelegate extends SearchDelegate {
           onPressed: () {
             query = '';
           },
-          icon: Icon(Icons.close))
+          icon: const Icon(Icons.close))
     ];
   }
 
@@ -23,7 +23,7 @@ class NewsSearchDelegate extends SearchDelegate {
         onPressed: () {
           close(context, null);
         },
-        icon: Icon(Icons.arrow_back_rounded));
+        icon: const Icon(Icons.arrow_back_rounded));
   }
 
   @override
@@ -40,7 +40,7 @@ class NewsSearchDelegate extends SearchDelegate {
           ),
         ),
         FutureBuilder<NewsResponse>(
-          future: ApiManger.searchResult(query ?? ''),
+          future: ApiManger.searchResult(query),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(
@@ -54,7 +54,7 @@ class NewsSearchDelegate extends SearchDelegate {
                   const Text('SomeThing Went Wrong'),
                   ElevatedButton(
                       onPressed: () {
-                        ApiManger.searchResult(query ?? "");
+                        ApiManger.searchResult(query);
                       },
                       child: const Text('Try Again'))
                 ],
@@ -66,7 +66,7 @@ class NewsSearchDelegate extends SearchDelegate {
                   Text(snapshot.data?.message ?? 'SomeThing Went Wrong'),
                   ElevatedButton(
                       onPressed: () {
-                        ApiManger.searchResult(query ?? "");
+                        ApiManger.searchResult(query);
                       },
                       child: const Text('Try Again'))
                 ],
@@ -107,7 +107,7 @@ class NewsSearchDelegate extends SearchDelegate {
         appBarTheme: AppBarTheme(
           backgroundColor: MyTheme.primaryColor,
         ),
-        inputDecorationTheme: InputDecorationTheme(
+        inputDecorationTheme: const InputDecorationTheme(
             border: OutlineInputBorder(
           borderSide: BorderSide.none,
         )));
