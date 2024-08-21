@@ -92,7 +92,7 @@ class _NewsContainerState extends State<NewsContainer> {
           news = newsList;
         } else if (news.first.title != newsList.first.title) {
           news = newsList;
-          controller.jumpTo(0);
+          controller.jumpTo(1);
         }
 
         return ListView.builder(
