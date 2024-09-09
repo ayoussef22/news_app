@@ -3,6 +3,7 @@ import 'package:news_app/API/ApiManger.dart';
 import 'package:news_app/Model/NewsResponse.dart';
 import 'package:news_app/Model/SourceResponse.dart';
 import 'package:news_app/News/NewsItem.dart';
+import 'package:provider/provider.dart';
 
 class NewsContainer extends StatefulWidget {
   Source source;
@@ -49,7 +50,8 @@ class _NewsContainerState extends State<NewsContainer> {
       nextPage = false;
       setState(() {});
     }
-    return FutureBuilder<NewsResponse>(
+    return
+      FutureBuilder<NewsResponse>(
       future: ApiManger.getNewsFromSourcesId(sourceId: widget.source.id ?? ''),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting &&
