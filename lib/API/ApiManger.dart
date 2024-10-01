@@ -5,7 +5,7 @@ import 'package:news_app/Model/NewsResponse.dart';
 import 'package:news_app/Model/SourceResponse.dart';
 
 class ApiManger {
-  static Future<SourceResponse> getSources(String categoryId) async {
+   Future<SourceResponse> getSources(String categoryId) async {
     //https://newsapi.org/v2/top-headlines/sources?apiKey=1cf42436dcba4135a8061c103f41d049
     Uri url = Uri.https(ApiConstants.baseUrl, ApiConstants.sourceApi,
         {'apiKey': '1cf42436dcba4135a8061c103f41d049', 'category': categoryId});
