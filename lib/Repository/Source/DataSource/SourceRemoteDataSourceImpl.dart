@@ -12,3 +12,11 @@ class SourceRemoteDataSourceImpl implements SourceRemoteDataSource{
   }
 
 }
+
+SourceRemoteDataSource injectSourceRemoteDataSource(){
+  return SourceRemoteDataSourceImpl(injectApiManager());
+}
+
+ApiManger injectApiManager(){
+  return ApiManger();
+}

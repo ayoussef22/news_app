@@ -1,22 +1,14 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:news_app/API/ApiManger.dart';
 import 'package:news_app/Category/cubit/States.dart';
-import 'package:news_app/Repository/Source/DataSource/SourceRemoteDataSourceImpl.dart';
-import 'package:news_app/Repository/Source/Repository/SourceRepositoryImpl.dart';
 import 'package:news_app/Repository/Source/SourceRepositoryContract.dart';
 
 class CategoryDetailsViewModel extends Cubit<SourceStates>{
   // todo: loading , Success , error
 
-  late SourceRepositoryContract repositoryContract;
- late SourceRemoteDataSource remoteDataSource;
- late ApiManger apiManger;
+  SourceRepositoryContract repositoryContract;
 
-CategoryDetailsViewModel():super (SourceLoadingState()){
-  apiManger=ApiManger();
-  remoteDataSource=SourceRemoteDataSourceImpl(apiManger);
-  repositoryContract=SourceRepositoryImpl(remoteDataSource);
-}
+
+CategoryDetailsViewModel(this.repositoryContract):super (SourceLoadingState());
 
 void getSourceByCategoryId(String categoryId) async{
   try{
