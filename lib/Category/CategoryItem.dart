@@ -22,9 +22,12 @@ class CategoryItem extends StatelessWidget {
           )),
       child: Column(
         children: [
-          Image.asset(
-            category.imagePath,
-            height: size.height * 0.19,
+          Expanded(
+            child: Image.asset(
+              category.imagePath,
+              height: size.height * 0.19,
+              fit: BoxFit.cover,
+            ),
           ),
           Text(
             category.title,

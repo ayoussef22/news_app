@@ -1,107 +1,109 @@
 import 'package:flutter/material.dart';
-import 'package:news_app/API/ApiManger.dart';
-import 'package:news_app/Model/NewsResponse.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:news_app/Model/SourceResponse.dart';
 import 'package:news_app/News/NewsItem.dart';
+import '../Repository/News/Respository/NewsRepositoryImpl.dart';
+import 'Cubit/NewsContainerViewModel.dart';
+import 'Cubit/States.dart';
 
 class NewsContainer extends StatefulWidget {
-  Source source;
+  final Source source;
 
-  NewsContainer({required this.source});
+  const NewsContainer({required this.source, Key? key}) : super(key: key);
 
   @override
   State<NewsContainer> createState() => _NewsContainerState();
 }
 
 class _NewsContainerState extends State<NewsContainer> {
-  int page = 1;
+  late NewsViewModel viewModel;
   final ScrollController controller = ScrollController();
-  List<News> news = [];
-  bool nextPage = false;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    viewModel = NewsViewModel(injectNewsRepository());
+    viewModel.getNews(sourceId: widget.source.id!);
+
     controller.addListener(() {
-      if (controller.position.atEdge) {
-        if (controller.offset != 0) {
-          nextPage = true;
-          setState(() {});
-        }
+      // load next page when scroll near bottom
+      if (controller.position.pixels >=
+          controller.position.maxScrollExtent - 100) {
+        viewModel.loadNextPage();
       }
     });
   }
 
   @override
+  void didUpdateWidget(covariant NewsContainer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // If User Changed The Source
+    if (oldWidget.source.id != widget.source.id) {
+      viewModel.getNews(sourceId: widget.source.id!, refresh: true);
+
+      // reset scroll
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (controller.hasClients && viewModel.news.isNotEmpty) {
+          controller.jumpTo(0);
+        }
+      });
+    }
+  }
+
+  @override
   void dispose() {
-    // TODO: implement dispose
-    super.dispose();
     controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (nextPage) {
-      ApiManger.getNewsFromSourcesId(
-              sourceId: widget.source.id ?? '', page: ++page)
-          .then((newsResponse) => news.addAll(newsResponse.articles ?? []));
-      nextPage = false;
-      setState(() {});
-    }
-    return FutureBuilder<NewsResponse>(
-      future: ApiManger.getNewsFromSourcesId(sourceId: widget.source.id ?? ''),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting &&
-            news.isEmpty) {
+    return BlocBuilder<NewsViewModel, NewsStates>(
+      bloc: viewModel,
+      builder: (context, state) {
+        // Loading indicator
+        if (state is NewsLoadingState && viewModel.news.isEmpty) {
           return Center(
-            child: CircularProgressIndicator(
-              color: Theme.of(context).primaryColor,
-            ),
-          );
-        } else if (snapshot.hasError) {
-          return Column(
-            children: [
-              const Text('SomeThing Went Wrong'),
-              ElevatedButton(
-                  onPressed: () {
-                    ApiManger.getNewsFromSourcesId(
-                        sourceId: widget.source.id ?? '');
-                    setState(() {});
-                  },
-                  child: const Text('Try Again'))
-            ],
-          );
-        }
-        if (snapshot.data?.status != 'ok') {
-          return Column(
-            children: [
-              Text(snapshot.data?.message ?? 'SomeThing Went Wrong'),
-              ElevatedButton(
-                  onPressed: () {
-                    ApiManger.getNewsFromSourcesId(
-                        sourceId: widget.source.id ?? '');
-                    setState(() {});
-                  },
-                  child: const Text('Try Again'))
-            ],
-          );
-        }
-        var newsList = snapshot.data?.articles ?? [];
-        if (news.isEmpty) {
-          news = newsList;
-        } else if (news.first.title != newsList.first.title) {
-          news = newsList;
-          controller.jumpTo(1);
+              child: CircularProgressIndicator(
+                  color: Theme.of(context).primaryColor));
         }
 
-        return ListView.builder(
-          controller: controller,
-          itemBuilder: (context, index) {
-            return NewsItem(news: news[index]);
-          },
-          itemCount: news.length,
-        );
+        // Error or no news
+        if (state is NewsErrorState && viewModel.news.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(state.errorMessage),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: () =>
+                      viewModel.getNews(sourceId: widget.source.id!),
+                  child: const Text('Try Again'),
+                ),
+              ],
+            ),
+          );
+        }
+
+        // Success or already loaded news
+        if (viewModel.news.isNotEmpty) {
+          return RefreshIndicator(
+            onRefresh: () async =>
+                viewModel.getNews(sourceId: widget.source.id!, refresh: true),
+            child: ListView.builder(
+              controller: controller,
+              itemCount: viewModel.news.length,
+              itemBuilder: (context, index) {
+                return NewsItem(news: viewModel.news[index]);
+              },
+            ),
+          );
+        }
+
+        // fallback
+        return Container();
       },
     );
   }
